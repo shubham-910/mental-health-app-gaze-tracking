@@ -25,7 +25,7 @@ const HomePage = () => {
         <img
           className="w-3/4 md:w-2/3 h-auto mt-4"
           src={loginImage}
-          alt="image for login screen"
+          alt="login screen"
           loading="lazy"
         />
       </div>

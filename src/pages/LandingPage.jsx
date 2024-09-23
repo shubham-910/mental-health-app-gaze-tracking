@@ -13,7 +13,7 @@ const LandingPage = () => {
         <div className="w-1/2">
           <img
             src="https://via.placeholder.com/400x300"
-            alt="Information Image"
+            alt="Information"
             className="rounded shadow-lg"
           />
         </div>
