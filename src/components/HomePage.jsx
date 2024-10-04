@@ -2,12 +2,11 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 import loginImage from "../assets/loginImage.svg";
 import LoginComp from "./LoginComp";
-import RegisterComp from "./RegisterComp"; // Ensure this component exists
+import RegisterComp from "./RegisterComp";
 
 const HomePage = () => {
   const location = useLocation();
 
-  // Determine which component to render based on the current route
   const renderForm = () => {
     if (location.pathname === "/register") {
       return <RegisterComp />;
@@ -25,7 +24,7 @@ const HomePage = () => {
         <img
           className="w-3/4 md:w-2/3 h-auto mt-4"
           src={loginImage}
-          alt="login screen"
+          alt="image for login screen"
           loading="lazy"
         />
       </div>

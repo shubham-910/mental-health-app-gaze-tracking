@@ -1,9 +1,10 @@
 import React from "react";
+import PermissionComp from "../components/PermissionComp";
 
 const PermissionPage = () => {
     return (
-        <div>
-            <h1>permission page</h1>
+        <div className="bg-theme-background min-h-screen">
+            <PermissionComp />
         </div>
     );
 };

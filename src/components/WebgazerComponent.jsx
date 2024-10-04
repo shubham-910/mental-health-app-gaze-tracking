@@ -1,183 +1,104 @@
-// import React, { useEffect, useRef, useState } from "react";
-
-// /* global webgazer */ // Tell ESLint that webgazer is a global variable
-
-// const WebgazerComponent = () => {
-//   const [error, setError] = useState(null); // Track errors
-//   const [calibrationComplete, setCalibrationComplete] = useState(false); // Track if calibration is done
-//   const canvasRef = useRef(null); // Reference for the canvas element
-
-//   useEffect(() => {
-//     // Dynamically load the Webgazer script
-//     const script = document.createElement("script");
-//     script.src = "https://cdn.jsdelivr.net/npm/webgazer";
-//     script.async = true;
-//     document.body.appendChild(script);
-
-//     // Script loaded successfully
-//     script.onload = async () => {
-//       if (window.webgazer) {
-//         try {
-//           const canvas = canvasRef.current;
-
-//           // Set the canvas for Webgazer
-//           window.webgazer.setVideoElementCanvas(canvas);
-//           await window.webgazer.begin();
-
-//           // Show prediction points for gaze tracking
-//           window.webgazer.showPredictionPoints(true);
-
-//           // Listen for gaze data after calibration
-//           window.webgazer.setGazeListener((data, timestamp) => {
-//             if (data && calibrationComplete) {
-//               const { x, y } = data; // Gaze x, y coordinates
-//               console.log(`Gaze coordinates: X=${x}, Y=${y} at time=${timestamp}`);
-//             } else {
-//               console.log("Gaze data is null, trying to capture again...");
-//             }
-//           });
-//         } catch (err) {
-//           setError("Error initializing Webgazer.");
-//         }
-//       } else {
-//         setError("Webgazer not found.");
-//       }
-//     };
-
-//     // Clean up: stop Webgazer and remove the script
-//     return () => {
-//       if (window.webgazer) {
-//         window.webgazer.end(); // Stops Webgazer when the component is removed
-//       }
-//       document.body.removeChild(script); // Remove script on component unmount
-//     };
-//   }, [calibrationComplete]);
-
-//   // Calibration point handler
-//   const handleCalibrationClick = (e) => {
-//     const { clientX: x, clientY: y } = e;
-//     window.webgazer.recordScreenPosition(x, y);
-//     console.log(`Calibration point recorded at X=${x}, Y=${y}`);
-//   };
-
-//   const completeCalibration = () => {
-//     setCalibrationComplete(true);
-//     console.log("Calibration completed.");
-//   };
-
-//   // Show error if there is one
-//   if (error) {
-//     return <div>Error: {error}</div>;
-//   }
-
-//   return (
-//     <>
-//       {/* Calibration points */}
-//       <div
-//         style={{ position: "absolute", top: "50%", left: "50%", zIndex: 1000 }}
-//       >
-//         <button
-//           onClick={handleCalibrationClick}
-//           style={{
-//             width: "20px",
-//             height: "20px",
-//             backgroundColor: "red",
-//             borderRadius: "50%",
-//           }}
-//         />
-//       </div>
-
-//       {/* Calibration complete button */}
-//       <button
-//         style={{ position: "fixed", top: "10px", right: "10px" }}
-//         onClick={completeCalibration}
-//       >
-//         Complete Calibration
-//       </button>
-
-//       {/* Canvas element that Webgazer uses */}
-//       <canvas ref={canvasRef} style={{ display: "none" }}></canvas>
-//     </>
-//   );
-// };
-
-// export default WebgazerComponent;
-
-
-
 import { useEffect } from "react";
 
 const WebgazerComponent = () => {
 
     const script = document.createElement("script");
-      script.src = "https://cdn.jsdelivr.net/npm/webgazer";
-    //  script.src = "https://api.gazerecorder.com/GazeCloudAPI.js";
-     script.async = true;
-     document.body.appendChild(script);
+        script.src = "https://cdn.jsdelivr.net/npm/webgazer";
+        script.async = true;
+        document.body.appendChild(script);
 
     useEffect(() => {
         const webgazer = window.webgazer;
         webgazer.setGazeListener((data,timestamp)=>{
-            console.log(data,timestamp);
+            if(data){
+                const gazeData = {
+                    gazeX : data.x,
+                    gazeY : data.y,
+                    timestamp : timestamp,
+
+                };
+            console.log(gazeData);
+            }
         }).begin();
+        webgazer.showVideoPreview(true).showPredictionPoints(true);
     },[]);
 };
 
 export default WebgazerComponent;
 
-
-
-// import { useEffect } from "react";
+// import { useEffect, useState } from "react";
 
 // const WebgazerComponent = () => {
-//   // Load the Webgazer script
-//   const script = document.createElement("script");
-//   script.src = "https://cdn.jsdelivr.net/npm/webgazer";
-//   script.async = true;
-//   document.body.appendChild(script);
+//     // const [gazeLogs, setGazeLogs] = useState([]); // State to hold the gaze data logs
 
-//   useEffect(() => {
-//     // Center coordinates of the screen for the black dot
-//     const centerX = window.innerWidth / 2;
-//     const centerY = window.innerHeight / 2;
+//     useEffect(() => {
+//         const script = document.createElement("script");
+//         script.src = "https://cdn.jsdelivr.net/npm/webgazer";
+//         script.async = true;
+//         document.body.appendChild(script);
 
-//     // Webgazer setup
-//     const webgazer = window.webgazer;
-//     webgazer
-//       .setGazeListener((data, timestamp) => {
-//         if (data) {
-//           console.log("Gaze coordinates:", data.x, data.y);
-//           console.log("Black dot coordinates:", centerX, centerY);
+//         script.onload = () => {
+//             const webgazer = window.webgazer;
 
-//           if(centerX == data.x && centerY == data.y){
-//             webgazer.stop();
-//           }
-//         } else {
-//           console.log("Gaze data is null");
-//         }
-//       })
-//       .begin();
-//   }, []);
+//             // Start Webgazer and collect gaze data
+//             webgazer.setGazeListener((data, timestamp) => {
+//                 if (data) {
+//                     const gazeData = {
+//                         gazeX: data.x,
+//                         gazeY: data.y,
+//                         timestamp: timestamp,
+//                     };
 
-//   return (
-//     <div>
-//       {/* Static black dot in the center of the screen */}
-//       <div
-//         style={{
-//           position: "absolute",
-//           top: "50%",
-//           left: "50%",
-//           width: "20px",
-//           height: "20px",
-//           backgroundColor: "black",
-//           borderRadius: "50%",
-//           transform: "translate(-50%, -50%)",
-//           zIndex: 1000,
-//         }}
-//       ></div>
-//     </div>
-//   );
+//                     // Add each data point to the gazeLogs array
+//                     // setGazeLogs((prevLogs) => [...prevLogs, gazeData]);
+
+//                     console.log("Gaze Data:", gazeData);
+//                 }
+//             }).begin();
+
+//             webgazer.showVideoPreview(true).showPredictionPoints(true);
+
+//             // Stop Webgazer and download the file after 3 minutes (180000 milliseconds)
+//             // setTimeout(() => {
+//             //     webgazer.end();
+//             //     console.log("Webgazer stopped after 3 minutes.");
+
+//             //     // After stopping Webgazer, download the collected gaze data as a file
+//             //     // downloadLogs();
+//             // }, 60000); // 3 minutes in milliseconds
+//         };
+
+//         return () => {
+//             const webgazer = window.webgazer;
+//             if (webgazer) {
+//                 webgazer.end();
+//                 console.log("Webgazer stopped.");
+//             }
+//         };
+//     }, []);
+
+//     // Function to download logs from gazeLogs as a text file
+//     // const downloadLogs = () => {
+//     //     if (gazeLogs.length > 0) {
+//     //         const fileData = JSON.stringify(gazeLogs, null, 2); // Convert gazeLogs array to JSON string
+//     //         const blob = new Blob([fileData], { type: "application/json" });
+//     //         const url = URL.createObjectURL(blob);
+//     //         const a = document.createElement("a");
+//     //         a.href = url;
+//     //         a.download = "gaze_logs.json"; // Download logs as a JSON file
+//     //         document.body.appendChild(a);
+//     //         a.click(); // Trigger download
+//     //         document.body.removeChild(a);
+//     //         URL.revokeObjectURL(url); // Clean up the object URL
+//     //         console.log("Gaze logs downloaded.");
+//     //     } else {
+//     //         console.log("No gaze data to download.");
+//     //     }
+//     // };
+
+//     return null; // No need to render anything in the UI
 // };
 
 // export default WebgazerComponent;
+
 
